@@ -26,10 +26,10 @@ public class CalendarConfig {
     private int slotDurationMinutes = 60; // Длительность одного слота
 
     @Column(name = "working_hours_start", nullable = false)
-    private int workingHoursStart = 9; // Начало рабочего дня (часы)
+    private int workingHoursStart =8; // Начало рабочего дня (часы)
 
     @Column(name = "working_hours_end", nullable = false)
-    private int workingHoursEnd = 18; // Конец рабочего дня (часы)
+    private int workingHoursEnd = 22; // Конец рабочего дня (часы)
 
     @Column(name = "advance_booking_days", nullable = false)
     private int advanceBookingDays = 60; // Максимальный срок бронирования

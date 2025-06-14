@@ -1,0 +1,59 @@
+server:
+  port: 8080
+
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/calendar_db?allowPublicKeyRetrieval=true&useSSL=false
+    username: root
+    password: Astra2005
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+        format_sql: true
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: priklinf13
+    password: 13group_the_best
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls.enable: true
+
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: 1091225339493-ovndajhj9m5ipsakgoclpnoehnvl4sps.apps.googleusercontent.com
+            client-secret: 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
+            scope:
+              - openid
+              - profile
+              - email
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+        provider:
+          google:
+            authorization-uri: https://accounts.google.com/o/oauth2/v2/auth
+            token-uri: https://oauth2.googleapis.com/token
+            user-info-uri: https://www.googleapis.com/oauth2/v3/userinfo
+            user-name-attribute: sub
+
+google:
+  client:
+    id: 1091225339493-ovndajhj9m5ipsakgoclpnoehnvl4sps.apps.googleusercontent.com
+    secret: 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
+    redirect-uri: http://localhost:8888/Callback
+  calendar:
+    application:
+      name: Calendar
+    credentials:
+      file: classpath:credentials.json
+

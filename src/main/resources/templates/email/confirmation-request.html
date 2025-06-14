@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<body>
+<p>Запрос на новую запись:</p>
+<p>Имя клиента: <strong th:text="${appointment.clientName}"></strong></p>
+<p>Email клиента: <strong th:text="${appointment.clientEmail}"></strong></p>
+<p>Время: <strong th:text="${#temporals.format(appointment.startTime, 'dd.MM.yyyy HH:mm')}"></strong> -
+    <strong th:text="${#temporals.format(appointment.endTime, 'HH:mm')}"></strong></p>
+<p>Описание: <span th:text="${appointment.description}">Без описания</span></p>
+<p><a th:href="${confirmationUrl}">Подтвердить запись</a></p>
+</body>
+</html>

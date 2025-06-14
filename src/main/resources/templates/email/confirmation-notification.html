@@ -1,0 +1,8 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<body>
+<p>Здравствуйте, <strong th:text="${appointment.clientName}">Клиент</strong>!</p>
+<p>Ваша запись на <strong th:text="${#temporals.format(appointment.startTime, 'dd.MM.yyyy HH:mm')}"></strong> подтверждена.</p>
+<p>Спасибо!</p>
+</body>
+</html>

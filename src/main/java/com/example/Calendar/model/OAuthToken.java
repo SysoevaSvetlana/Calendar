@@ -27,4 +27,6 @@ public class OAuthToken {
 
     @Column(name = "issued_at", nullable = false)
     private Instant issuedAt; // Время выдачи токена
+    @Column
+    private String scope;
 }
