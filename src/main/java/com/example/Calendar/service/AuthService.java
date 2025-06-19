@@ -32,7 +32,7 @@ public class AuthService {
     private final UserService userService;
     private final OAuthTokenRepository tokenRepository;
 
-    public User authenticateWithGoogle(String authCode) throws IOException, GeneralSecurityException {
+    public User authenticateWithGoogle(String authCode, String nameFromFrontend) throws IOException, GeneralSecurityException {
         // Обмен кода на токены
         GoogleTokenResponse tokenResponse = new GoogleAuthorizationCodeTokenRequest(
                 new NetHttpTransport(),
@@ -57,7 +57,10 @@ public class AuthService {
         token.setScope(tokenResponse.getScope());
         tokenRepository.save(token);
 
-        return userService.findOrCreateUser(idToken);
+        return userService.findOrCreateUser(idToken, nameFromFrontend);
+
+
+
     }
 
     public String refreshAccessToken(String userId) throws IOException {

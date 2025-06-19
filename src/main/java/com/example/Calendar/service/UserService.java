@@ -18,7 +18,7 @@ public class UserService {
     private final UserRepository userRepository;
 
     @Transactional
-    public User findOrCreateUser(GoogleIdToken idToken) {
+    public User findOrCreateUser(GoogleIdToken idToken, String nameFromFrontend) {
         Payload payload = idToken.getPayload();
         String email = payload.getEmail();
         String googleId = payload.getSubject();
@@ -27,7 +27,7 @@ public class UserService {
                 .orElseGet(() -> {
                     User newUser = new User();
                     newUser.setEmail(email);
-                    newUser.setName((String) payload.get("name"));
+                    newUser.setName(nameFromFrontend);
                     newUser.setGoogleId(googleId);
                     return userRepository.save(newUser);
                 });

@@ -38,7 +38,7 @@ spring:
               - openid
               - profile
               - email
-            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+            redirect-uri: http://localhost:8080/api/auth/oauth2/callback
         provider:
           google:
             authorization-uri: https://accounts.google.com/o/oauth2/v2/auth
@@ -50,7 +50,7 @@ google:
   client:
     id: 1091225339493-ovndajhj9m5ipsakgoclpnoehnvl4sps.apps.googleusercontent.com
     secret: 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
-    redirect-uri: http://localhost:8888/Callback
+    redirect-uri: http://localhost:8080/api/auth/oauth2/callback
   calendar:
     application:
       name: Calendar
