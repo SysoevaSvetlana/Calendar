@@ -39,6 +39,8 @@ spring:
               - profile
               - email
             redirect-uri: http://localhost:8080/api/auth/oauth2/callback
+
+
         provider:
           google:
             authorization-uri: https://accounts.google.com/o/oauth2/v2/auth

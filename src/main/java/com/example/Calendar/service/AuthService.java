@@ -1,7 +1,5 @@
 package com.example.Calendar.service;
 
-
-
 import com.example.Calendar.model.OAuthToken;
 import com.example.Calendar.model.User;
 import com.example.Calendar.repository.OAuthTokenRepository;
@@ -20,6 +18,7 @@ import java.util.Collections;
 @Service
 @RequiredArgsConstructor
 public class AuthService {
+
     @Value("${google.client.id}")
     private String clientId;
 
@@ -32,8 +31,7 @@ public class AuthService {
     private final UserService userService;
     private final OAuthTokenRepository tokenRepository;
 
-    public User authenticateWithGoogle(String authCode, String nameFromFrontend) throws IOException, GeneralSecurityException {
-        // Обмен кода на токены
+    public User authenticateWithGoogle(String authCode) throws IOException, GeneralSecurityException {
         GoogleTokenResponse tokenResponse = new GoogleAuthorizationCodeTokenRequest(
                 new NetHttpTransport(),
                 new GsonFactory(),
@@ -43,11 +41,9 @@ public class AuthService {
                 redirectUri)
                 .execute();
 
-        // Верификация ID токена
         GoogleIdToken idToken = verifyIdToken(tokenResponse.getIdToken());
         GoogleIdToken.Payload payload = idToken.getPayload();
 
-        // Сохранение токенов
         OAuthToken token = new OAuthToken();
         token.setUserId(payload.getSubject());
         token.setAccessToken(tokenResponse.getAccessToken());
@@ -57,10 +53,7 @@ public class AuthService {
         token.setScope(tokenResponse.getScope());
         tokenRepository.save(token);
 
-        return userService.findOrCreateUser(idToken, nameFromFrontend);
-
-
-
+        return userService.findOrCreateUser(idToken);
     }
 
     public String refreshAccessToken(String userId) throws IOException {

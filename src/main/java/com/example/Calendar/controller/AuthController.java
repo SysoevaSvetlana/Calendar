@@ -1,7 +1,7 @@
 package com.example.Calendar.controller;
-
 import com.example.Calendar.model.User;
 import com.example.Calendar.service.AuthService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -40,23 +40,28 @@ public class AuthController {
         response.sendRedirect(authUrl);
     }
 
-    /**
-     * Обработка callback-а от Google после входа
-     */
     @GetMapping("/oauth2/callback")
-    public void handleGoogleCallback(@RequestParam("code") String code,
-                                     HttpServletResponse response) throws IOException {
+    public void handleOAuthCallback(@RequestParam String code, HttpServletResponse response) throws IOException {
+        User user = null;
         try {
-            User user = authService.authenticateWithGoogle(code);
-
-            // Пример: сохраняем в localStorage через фронт (по JWT или email)
-            String frontRedirect = "http://localhost:3000/oauth-success?email=" + URLEncoder.encode(user.getEmail(), StandardCharsets.UTF_8);
-            response.sendRedirect(frontRedirect);
-        } catch (GeneralSecurityException | IOException e) {
-            response.sendRedirect("http://localhost:3000/oauth-error");
+            user = authService.authenticateWithGoogle(code);
+        } catch (GeneralSecurityException e) {
+            throw new RuntimeException(e);
         }
-    }
 
+        ObjectMapper mapper = new ObjectMapper();
+        String userJson = mapper.writeValueAsString(user);
+        String escapedUserJson = userJson.replace("'", "\\'");
+
+        String script = "<script>" +
+                "window.opener.postMessage({ type: 'oauth-success', user: " + userJson + " }, '*');" +
+                "window.close();" +
+                "</script>";
+
+
+        response.setContentType("text/html;charset=UTF-8");
+        response.getWriter().write(script);
+    }
     /**
      * Обновление accessToken вручную
      */
@@ -65,5 +70,6 @@ public class AuthController {
         String newToken = authService.refreshAccessToken(userId);
         return ResponseEntity.ok(Collections.singletonMap("accessToken", newToken));
     }
+    public record AuthCodeRequest(String code) {}
 
 }

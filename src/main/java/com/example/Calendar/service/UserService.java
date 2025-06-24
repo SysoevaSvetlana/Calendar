@@ -18,17 +18,18 @@ public class UserService {
     private final UserRepository userRepository;
 
     @Transactional
-    public User findOrCreateUser(GoogleIdToken idToken, String nameFromFrontend) {
+    public User findOrCreateUser(GoogleIdToken idToken) {
         Payload payload = idToken.getPayload();
         String email = payload.getEmail();
         String googleId = payload.getSubject();
+        String fullName = (String) payload.get("name");
 
         return userRepository.findByGoogleId(googleId)
                 .orElseGet(() -> {
                     User newUser = new User();
                     newUser.setEmail(email);
-                    newUser.setName(nameFromFrontend);
                     newUser.setGoogleId(googleId);
+                    newUser.setName(fullName);
                     return userRepository.save(newUser);
                 });
     }
