@@ -13,14 +13,22 @@ public class CalendarConfigService {
 
     private final CalendarConfigRepository calendarConfigRepository;
 
+    //    @Transactional(readOnly = true)
+//    public CalendarConfig getCalendarConfig() {
+//        return calendarConfigRepository.findByCalendarId("primary")
+//                .orElseThrow(() -> new IllegalStateException("Calendar config not found"));
+//    }
     @Transactional(readOnly = true)
     public CalendarConfig getCalendarConfig() {
-        return calendarConfigRepository.findByCalendarId("primary")
-                .orElseThrow(() -> new IllegalStateException("Calendar config not found"));
+
+        return calendarConfigRepository.findAll().stream()
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException("Config not found"));
     }
 
     @Transactional
     public void updateWorkingHours(int startHour, int endHour) {
-        calendarConfigRepository.updateWorkingHours("primary", startHour, endHour);
+
+        calendarConfigRepository.updateWorkingHours(getCalendarConfig().getCalendarId(), startHour, endHour);
     }
 }

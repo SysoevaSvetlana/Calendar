@@ -24,7 +24,22 @@ public class GoogleCalendarService {
 
     private final Calendar googleCalendar;
     private final CalendarConfigRepository calendarConfigRepository;
-    // Получить события в заданном интервале
+    private final CalendarConfigService configService;
+
+
+//    public List<Event> getEvents(LocalDateTime start, LocalDateTime end) throws IOException {
+//        CalendarConfig cfg = configService.getCalendarConfig();
+//
+//        Events events = googleCalendar.events()
+//                .list(cfg.getCalendarId())                 // ← здесь ID из БД
+//                .setTimeMin(new DateTime(start + "Z"))
+//                .setTimeMax(new DateTime(end   + "Z"))
+//                .setSingleEvents(true)
+//                .setOrderBy("startTime")
+//                .execute();
+//        return events.getItems();
+//    }
+
     public List<Event> getEvents(LocalDateTime start, LocalDateTime end) throws IOException {
         DateTime timeMin = new DateTime(start.toString() + "Z");
         DateTime timeMax = new DateTime(end.toString() + "Z");
@@ -41,8 +56,9 @@ public class GoogleCalendarService {
 
 
     public String createEvent(Appointment appointment) throws IOException {
-        CalendarConfig config = calendarConfigRepository.findByCalendarId("primary")
-                .orElseThrow(() -> new IllegalStateException("Calendar config not found"));
+        //CalendarConfig config = calendarConfigRepository.findByCalendarId("primary")
+        CalendarConfig config = configService.getCalendarConfig();
+                //.orElseThrow(() -> new IllegalStateException("Calendar config not found"));
 
         Event event = new Event()
                 .setSummary("Appointment with " + appointment.getClientName())
