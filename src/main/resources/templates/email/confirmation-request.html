@@ -1,12 +1,40 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.w3.org/1999/xhtml">
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Новая заявка на съёмку</title>
+    <style>
+        body{font-family:Arial,Helvetica,sans-serif;margin:0;padding:0;color:#333}
+        .box{max-width:600px;margin:0 auto;padding:24px}
+        .btn{display:inline-block;padding:12px 20px;margin-top:20px;
+             background:#4CAF50;color:#fff;text-decoration:none;border-radius:4px}
+        .details td{padding:4px 8px}
+        .details tr:nth-child(even){background:#f7f7f7}
+    </style>
+</head>
 <body>
-<p>Запрос на новую запись:</p>
-<p>Имя клиента: <strong th:text="${appointment.clientName}"></strong></p>
-<p>Email клиента: <strong th:text="${appointment.clientEmail}"></strong></p>
-<p>Время: <strong th:text="${#temporals.format(appointment.startTime, 'dd.MM.yyyy HH:mm')}"></strong> -
-    <strong th:text="${#temporals.format(appointment.endTime, 'HH:mm')}"></strong></p>
-<p>Описание: <span th:text="${appointment.description}">Без описания</span></p>
-<p><a th:href="${confirmationUrl}">Подтвердить запись</a></p>
+<div class="box">
+    <h2>Новая заявка на съёмку</h2>
+
+    <p>Здравствуйте!</p>
+    <p>Календарь получил новую заявку. Проверьте её детали и подтвердите, если время подходит.</p>
+
+    <table class="details" border="0" cellspacing="0" cellpadding="0">
+        <tr><td><strong>№ заявки</strong></td><td th:text="${appointment.id}">123</td></tr>
+        <tr><td><strong>Имя клиента</strong></td><td th:text="${appointment.clientName}">Иван Иванов</td></tr>
+        <tr><td><strong>E-mail</strong></td><td th:text="${appointment.clientEmail}">ivan@example.com</td></tr>
+        <tr><td><strong>Дата&nbsp;/ время&nbsp;начала</strong></td>
+            <td th:text="${#temporals.format(appointment.startTime,'dd.MM.yyyy HH:mm')}">25.06.2025 10:00</td></tr>
+        <tr><td><strong>Дата&nbsp;/ время&nbsp;окончания</strong></td>
+            <td th:text="${#temporals.format(appointment.endTime,'dd.MM.yyyy HH:mm')}">25.06.2025 11:00</td></tr>
+        <tr><td><strong>Описание</strong></td><td th:text="${appointment.description}">Портретная фотосессия…</td></tr>
+    </table>
+
+    <a class="btn" th:href="${confirmationUrl}">✅ Подтвердить запись</a>
+
+    <p style="margin-top:32px;font-size:12px;color:#777">
+        Если вы не планировали эту запись, просто игнорируйте письмо.
+    </p>
+</div>
 </body>
 </html>

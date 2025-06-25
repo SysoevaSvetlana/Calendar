@@ -9,6 +9,7 @@ import com.google.api.services.calendar.Calendar;
 import com.google.api.services.calendar.model.Event;
 import com.google.api.services.calendar.model.EventDateTime;
 import com.google.api.services.calendar.model.Events;
+import com.google.api.client.util.DateTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +18,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
+import java.time.*;
 
 @Service
 @RequiredArgsConstructor
@@ -25,32 +27,21 @@ public class GoogleCalendarService {
     private final Calendar googleCalendar;
     private final CalendarConfigRepository calendarConfigRepository;
     private final CalendarConfigService configService;
+    private final ZoneId zone = ZoneId.of("Europe/Moscow");
 
-
-//    public List<Event> getEvents(LocalDateTime start, LocalDateTime end) throws IOException {
-//        CalendarConfig cfg = configService.getCalendarConfig();
-//
-//        Events events = googleCalendar.events()
-//                .list(cfg.getCalendarId())                 // ← здесь ID из БД
-//                .setTimeMin(new DateTime(start + "Z"))
-//                .setTimeMax(new DateTime(end   + "Z"))
-//                .setSingleEvents(true)
-//                .setOrderBy("startTime")
-//                .execute();
-//        return events.getItems();
-//    }
 
     public List<Event> getEvents(LocalDateTime start, LocalDateTime end) throws IOException {
-        DateTime timeMin = new DateTime(start.toString() + "Z");
-        DateTime timeMax = new DateTime(end.toString() + "Z");
+        CalendarConfig cfg = configService.getCalendarConfig();
+        DateTime timeMin = new DateTime(Date.from(start.atZone(zone).toInstant()));
+        DateTime timeMax = new DateTime(Date.from(end.atZone(zone).toInstant()));
 
-        Events events = googleCalendar.events().list("primary")
+        Events events = googleCalendar.events()
+                .list(cfg.getCalendarId())
                 .setTimeMin(timeMin)
                 .setTimeMax(timeMax)
-                .setOrderBy("startTime")
                 .setSingleEvents(true)
+                .setOrderBy("startTime")
                 .execute();
-
         return events.getItems();
     }
 
@@ -58,7 +49,7 @@ public class GoogleCalendarService {
     public String createEvent(Appointment appointment) throws IOException {
         //CalendarConfig config = calendarConfigRepository.findByCalendarId("primary")
         CalendarConfig config = configService.getCalendarConfig();
-                //.orElseThrow(() -> new IllegalStateException("Calendar config not found"));
+        //.orElseThrow(() -> new IllegalStateException("Calendar config not found"));
 
         Event event = new Event()
                 .setSummary("Appointment with " + appointment.getClientName())
@@ -79,6 +70,7 @@ public class GoogleCalendarService {
 
         return createdEvent.getId();
     }
+
     // Проверить, свободен ли слот (учитывая GCal)
     public boolean isSlotAvailable(LocalDateTime start, LocalDateTime end) throws IOException {
         List<Event> events = getEvents(start.minusMinutes(1), end.plusMinutes(1));

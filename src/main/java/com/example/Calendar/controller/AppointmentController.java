@@ -1,9 +1,11 @@
 package com.example.Calendar.controller;
 
 
+import com.example.Calendar.dto.BusySlotDto;
 import com.example.Calendar.model.Appointment;
 import com.example.Calendar.service.AppointmentService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -23,39 +25,16 @@ public class AppointmentController {
 
     private final AppointmentService appointmentService;
 
-    //    @GetMapping("/slots")
-//    public List<Appointment> getAvailableSlots(
-//            @RequestParam LocalDateTime start,
-//            @RequestParam LocalDateTime end) {
-//        return appointmentService.getAvailableSlots(start, end);
-//    }
-//    @GetMapping("/slots")
-//    public List<LocalDateTime[]> getUnavailableSlots(
-//            @RequestParam OffsetDateTime start,
-//            @RequestParam OffsetDateTime end) throws IOException {
-//
-//        return appointmentService.getUnavailableSlots(
-//                start.toLocalDateTime(),
-//                end.toLocalDateTime());
-//    }
 
     @GetMapping("/slots")
-    public List<Map<String, Object>> getUnavailableSlots(
-            @RequestParam OffsetDateTime start,
-            @RequestParam OffsetDateTime end) throws IOException {
+    public List<BusySlotDto> slots(@RequestParam OffsetDateTime start,
+                                   @RequestParam OffsetDateTime end) throws IOException {
 
-        List<LocalDateTime[]> busySlots = appointmentService.getUnavailableSlots(
-                start.toLocalDateTime(), end.toLocalDateTime());
 
-        return busySlots.stream().map(slot -> {
-            Map<String, Object> event = new HashMap<>();
-            event.put("start", slot[0].toString()); // ISO 8601
-            event.put("end", slot[1].toString());
-            event.put("title", "Занято");
-            event.put("display", "background");
-            event.put("backgroundColor", "#d3d3d3");
-            return event;
-        }).collect(Collectors.toList());
+        LocalDateTime from = start.toLocalDateTime();
+        LocalDateTime to = end.toLocalDateTime();
+
+        return appointmentService.getBusySlots(from, to);
     }
 
 
@@ -69,9 +48,10 @@ public class AppointmentController {
         );
     }
 
-    @PostMapping("/confirm")
-    public void confirmAppointment(@RequestParam UUID token) throws IOException {
+    @GetMapping("/confirm")
+    public ResponseEntity<Void> confirmAppointment(@RequestParam UUID token) throws IOException {
         appointmentService.confirmAppointment(token);
+        return ResponseEntity.ok().build();
     }
 
     public record AppointmentRequest(
