@@ -2,6 +2,8 @@ package com.example.Calendar.service;
 
 
 import com.example.Calendar.model.Appointment;
+import com.example.Calendar.model.Notification;
+import com.example.Calendar.repository.NotificationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -13,6 +15,7 @@ import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Service
@@ -21,9 +24,10 @@ public class EmailService {
 
     private final JavaMailSender mailSender;
     private final TemplateEngine templateEngine;
+    private final NotificationRepository notificationRepo;
 
     public void sendConfirmationRequest(String ownerEmail, Appointment appointment) {
-        String confirmationUrl = "http://yourdomain.com/confirm?token=" + appointment.getConfirmationToken();
+        String confirmationUrl = "http://localhost:8080/api/appointments/confirm?token=" + appointment.getConfirmationToken();
 
         Context context = new Context();
         context.setVariable("appointment", appointment);
@@ -53,6 +57,14 @@ public class EmailService {
             helper.setText(htmlContent, true);
 
             mailSender.send(message);
+
+            // 2. запись в БД
+            Notification n = new Notification();
+            n.setRecipientEmail(to);
+            n.setSubject(subject);
+            n.setContent( htmlContent);
+            n.setSentAt(LocalDateTime.now());
+            notificationRepo.save(n);
         } catch (MessagingException e) {
             throw new RuntimeException("Failed to send email", e);
         }
