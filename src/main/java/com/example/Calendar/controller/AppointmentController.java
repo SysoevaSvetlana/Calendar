@@ -27,14 +27,14 @@ public class AppointmentController {
 
 
     @GetMapping("/slots")
-    public List<BusySlotDto> slots(@RequestParam OffsetDateTime start,
-                                   @RequestParam OffsetDateTime end) throws IOException {
+        public List<BusySlotDto> slots(@RequestParam OffsetDateTime start,
+                @RequestParam OffsetDateTime end) throws IOException {
 
 
-        LocalDateTime from = start.toLocalDateTime();
-        LocalDateTime to = end.toLocalDateTime();
+            LocalDateTime from = start.toLocalDateTime();
+            LocalDateTime to = end.toLocalDateTime();
 
-        return appointmentService.getBusySlots(from, to);
+            return appointmentService.getBusySlots(from, to);
     }
 
 
@@ -57,6 +57,7 @@ public class AppointmentController {
     public record AppointmentRequest(
             String clientName,
             String clientEmail,
+            String clientPhone,
             LocalDateTime startTime,
             LocalDateTime endTime,
             String description,
@@ -66,6 +67,7 @@ public class AppointmentController {
             Appointment appointment = new Appointment();
             appointment.setClientName(clientName);
             appointment.setClientEmail(clientEmail);
+            appointment.setClientPhone(clientPhone);
             appointment.setStartTime(startTime);
             appointment.setEndTime(endTime);
             appointment.setDescription(description);

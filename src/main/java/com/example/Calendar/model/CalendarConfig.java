@@ -20,7 +20,7 @@ public class CalendarConfig {
     private String ownerEmail; // Email владельца календаря
 
     @Column(name = "time_zone", nullable = false)
-    private String timeZone = "UTC"; // Часовой пояс календаря
+    private String timeZone = "Europe/Moscow"; // Часовой пояс календаря
 
     @Column(name = "slot_duration_minutes", nullable = false)
     private int slotDurationMinutes = 60; // Длительность одного слота

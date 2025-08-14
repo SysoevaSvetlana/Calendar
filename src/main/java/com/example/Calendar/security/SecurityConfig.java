@@ -1,4 +1,4 @@
-package com.example.Calendar.config;
+package com.example.Calendar.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,14 +29,11 @@ public class SecurityConfig {
                                 "/api/calendar/slots",
                                 "/api/appointments/slots",
                                 "/api/appointments/**",
-                                "/oauth2/**",
                                 "/"
                         ).permitAll()
 
-                        .anyRequest().authenticated()
-                )
-                .oauth2Login(oauth -> oauth
-                        .defaultSuccessUrl("/api/auth/success", true)
+                        .anyRequest().permitAll()
+
                 );
 
         return http.build();

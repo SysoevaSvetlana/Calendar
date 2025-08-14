@@ -27,32 +27,32 @@ spring:
           auth: true
           starttls.enable: true
 
-  security:
-    oauth2:
-      client:
-        registration:
-          google:
-            client-id: 1091225339493-ovndajhj9m5ipsakgoclpnoehnvl4sps.apps.googleusercontent.com
-            client-secret: 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
-            scope:
-              - openid
-              - profile
-              - email
-            redirect-uri: http://localhost:8080/api/auth/oauth2/callback
+#  security:
+#    oauth2:
+#      client:
+#        registration:
+#          google:
+#            client-id: 1091225339493-ovndajhj9m5ipsakgoclpnoehnvl4sps.apps.googleusercontent.com
+#            client-secret: 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
+#            scope:
+#              - openid
+#              - profile
+#              - email
+#            redirect-uri: http://localhost:8080/api/auth/oauth2/callback
 
 
-        provider:
-          google:
-            authorization-uri: https://accounts.google.com/o/oauth2/v2/auth
-            token-uri: https://oauth2.googleapis.com/token
-            user-info-uri: https://www.googleapis.com/oauth2/v3/userinfo
-            user-name-attribute: sub
+#        provider:
+#          google:
+#            authorization-uri: https://accounts.google.com/o/oauth2/v2/auth
+#            token-uri: https://oauth2.googleapis.com/token
+#            user-info-uri: https://www.googleapis.com/oauth2/v3/userinfo
+#            user-name-attribute: sub
 
 google:
   client:
     id: 1091225339493-ovndajhj9m5ipsakgoclpnoehnvl4sps.apps.googleusercontent.com
     secret: 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
-    redirect-uri: http://localhost:8080/api/auth/oauth2/callback
+#    redirect-uri: http://localhost:8080/api/auth/oauth2/callback
   calendar:
     application:
       name: Calendar

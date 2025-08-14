@@ -19,6 +19,7 @@ import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 import java.time.*;
+import java.util.TimeZone;
 
 @Service
 @RequiredArgsConstructor
@@ -51,16 +52,57 @@ public class GoogleCalendarService {
         CalendarConfig config = configService.getCalendarConfig();
         //.orElseThrow(() -> new IllegalStateException("Calendar config not found"));
 
+        // Описание события (все данные клиента)
+        String description = String.format(
+                "Имя клиента: %s%n" +
+                "Email: %s%n" +
+                "Телефон: %s%n" +
+                "Комментарий: %s",
+                appointment.getClientName(),
+                appointment.getClientEmail(),
+                appointment.getClientPhone(),
+                appointment.getDescription() != null ? appointment.getDescription() : "");
+
+
+
         Event event = new Event()
                 .setSummary("Appointment with " + appointment.getClientName())
-                .setDescription(appointment.getDescription());
+                .setDescription(description);
 
-        // Установка времени начала и окончания
+
+//        // Чётко указываем timezone
+//        EventDateTime start = new EventDateTime()
+//                .setDateTime(new DateTime(appointment.getStartTime().atZone(ZoneId.of(config.getTimeZone())).toInstant().toEpochMilli()))
+//                .setTimeZone(config.getTimeZone());
+//
+//        EventDateTime end = new EventDateTime()
+//                .setDateTime(new DateTime(appointment.getEndTime().atZone(ZoneId.of(config.getTimeZone())).toInstant().toEpochMilli()))
+//                .setTimeZone(config.getTimeZone());
+//
+//        event.setStart(start);
+//        event.setEnd(end);
+
+        ZonedDateTime startZoned = appointment.getStartTime().atZone(zone);
+        ZonedDateTime endZoned = appointment.getEndTime().atZone(zone);
+
         event.setStart(new EventDateTime()
-                .setDateTime(toGoogleDateTime(appointment.getStartTime(), config.getTimeZone())));
+                .setDateTime(new com.google.api.client.util.DateTime(
+                        java.util.Date.from(startZoned.toInstant()), TimeZone.getTimeZone(zone)))
+                .setTimeZone(zone.toString())
+        );
 
         event.setEnd(new EventDateTime()
-                .setDateTime(toGoogleDateTime(appointment.getEndTime(), config.getTimeZone())));
+                .setDateTime(new com.google.api.client.util.DateTime(
+                        java.util.Date.from(endZoned.toInstant()), TimeZone.getTimeZone(zone)))
+                .setTimeZone(zone.toString())
+        );
+
+//        // Установка времени начала и окончания
+//        event.setStart(new EventDateTime()
+//                .setDateTime(toGoogleDateTime(appointment.getStartTime(), config.getTimeZone())));
+//
+//        event.setEnd(new EventDateTime()
+//                .setDateTime(toGoogleDateTime(appointment.getEndTime(), config.getTimeZone())));
 
         // Создание события в календаре
         Event createdEvent = googleCalendar.events()

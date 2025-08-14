@@ -21,6 +21,8 @@ public class Appointment {
 
     @Column(name = "client_email", nullable = false)
     private String clientEmail;
+    @Column(name = "client_phone", nullable = false)
+    private String clientPhone;
 
     @Column(name = "start_time", nullable = false)
     private LocalDateTime startTime;
@@ -41,9 +43,7 @@ public class Appointment {
     @Column(name = "confirmation_token", unique = true)
     private UUID confirmationToken; // Токен для подтверждения
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user; // Владелец календаря
+
 
     // Метод для генерации токена подтверждения
     public void generateConfirmationToken() {

@@ -4,10 +4,10 @@ package com.example.Calendar.service;
 import com.example.Calendar.dto.BusySlotDto;
 import com.example.Calendar.model.Appointment;
 import com.example.Calendar.model.AppointmentStatus;
-import com.example.Calendar.model.User;
+
 import com.example.Calendar.repository.AppointmentRepository;
 import com.example.Calendar.repository.CalendarConfigRepository;
-import com.example.Calendar.repository.UserRepository;
+
 import com.google.api.services.calendar.model.EventDateTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -26,12 +26,10 @@ import java.util.UUID;
 public class AppointmentService {
 
     private final AppointmentRepository appointmentRepository;
-    private final UserRepository userRepository;
+
     private final CalendarConfigRepository calendarConfigRepository;
     private final EmailService emailService;
     private final GoogleCalendarService googleCalendarService;
-
-
 
 
     private final ZoneId zone = ZoneId.of("Europe/Moscow");
@@ -49,10 +47,9 @@ public class AppointmentService {
     }
 
 
-
     private BusySlotDto toDto(Event ev) {
         OffsetDateTime start = toOffset(ev.getStart());
-        OffsetDateTime end   = toOffset(ev.getEnd());
+        OffsetDateTime end = toOffset(ev.getEnd());
 
         return new BusySlotDto(
                 start.toString(),
@@ -75,7 +72,6 @@ public class AppointmentService {
     }
 
 
-
     @Transactional
     public Appointment createAppointment(Appointment appointment, String ownerEmail) {
         // Проверка доступности слота
@@ -83,10 +79,6 @@ public class AppointmentService {
             throw new IllegalStateException("This time slot is already booked");
         }
 
-        // Установка владельца календаря
-        User owner = userRepository.findByEmail(ownerEmail)
-                .orElseThrow(() -> new IllegalArgumentException("Calendar owner not found"));
-        appointment.setUser(owner);
 
         // Генерация токена подтверждения
         appointment.generateConfirmationToken();
