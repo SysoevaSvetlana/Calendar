@@ -19,7 +19,7 @@ public class Appointment {
     @Column(name = "client_name", nullable = false)
     private String clientName;
 
-    @Column(name = "client_email", nullable = false)
+    @Column(name = "client_email", nullable = true)
     private String clientEmail;
     @Column(name = "client_phone", nullable = false)
     private String clientPhone;

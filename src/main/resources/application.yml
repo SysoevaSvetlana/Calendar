@@ -27,6 +27,15 @@ spring:
           auth: true
           starttls.enable: true
 
+yandex:
+  caldav:
+    url: "https://caldav.yandex.ru/"
+    username: "dorri.ribka@yandex.ru"
+    password: "ddnkxorivbocgjrj"
+    calendar-path: "calendars/dorri.ribka%40yandex.ru/events-34508014/"
+
+
+
 #  security:
 #    oauth2:
 #      client:
@@ -48,14 +57,14 @@ spring:
 #            user-info-uri: https://www.googleapis.com/oauth2/v3/userinfo
 #            user-name-attribute: sub
 
-google:
-  client:
-    id: 1091225339493-ovndajhj9m5ipsakgoclpnoehnvl4sps.apps.googleusercontent.com
-    secret: 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
-#    redirect-uri: http://localhost:8080/api/auth/oauth2/callback
-  calendar:
-    application:
-      name: Calendar
-    credentials:
-      file: classpath:credentials.json
+#google:
+#  client:
+#    id: 1091225339493-ovndajhj9m5ipsakgoclpnoehnvl4sps.apps.googleusercontent.com
+#    secret: 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
+##    redirect-uri: http://localhost:8080/api/auth/oauth2/callback
+#  calendar:
+#    application:
+#      name: Calendar
+#    credentials:
+#      file: classpath:credentials.json
 

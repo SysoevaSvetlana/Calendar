@@ -10,6 +10,8 @@ import com.example.Calendar.repository.CalendarConfigRepository;
 
 import com.google.api.services.calendar.model.EventDateTime;
 import lombok.RequiredArgsConstructor;
+import net.fortuna.ical4j.data.ParserException;
+import net.fortuna.ical4j.model.component.VEvent;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.google.api.services.calendar.model.Event;
@@ -29,37 +31,54 @@ public class AppointmentService {
 
     private final CalendarConfigRepository calendarConfigRepository;
     private final EmailService emailService;
-    private final GoogleCalendarService googleCalendarService;
+
+    private final YandexCalDavService СalendarService;
 
 
     private final ZoneId zone = ZoneId.of("Europe/Moscow");
 
-    @Transactional(readOnly = true)
-    public List<BusySlotDto> getBusySlots(LocalDateTime from, LocalDateTime to)
-            throws IOException {
 
+    @Transactional(readOnly = true)
+    public List<BusySlotDto> getBusySlots(LocalDateTime from, LocalDateTime to) throws IOException, ParserException {
         List<BusySlotDto> result = new ArrayList<>();
 
-        for (Event ev : googleCalendarService.getEvents(from, to)) {
-            result.add(toDto(ev));
+
+        List<VEvent> events = СalendarService.getEvents(from, to);
+        for (VEvent ev : events) {
+            BusySlotDto dto = toDto(ev);
+            if (dto != null) {
+                result.add(dto);
+            }
         }
+
         return List.copyOf(result);
     }
 
 
-    private BusySlotDto toDto(Event ev) {
-        OffsetDateTime start = toOffset(ev.getStart());
-        OffsetDateTime end = toOffset(ev.getEnd());
 
-        return new BusySlotDto(
-                start.toString(),
-                end.toString(),
-                "Занято",
-                "#d3d3d3",
-                "background"
+    private BusySlotDto toDto(VEvent ev) {
+        try {
+            Instant startInstant = ev.getStartDate().getDate().toInstant();
+            Instant endInstant = ev.getEndDate().getDate().toInstant();
 
-        );
+            OffsetDateTime start = OffsetDateTime.ofInstant(startInstant, zone);
+            OffsetDateTime end = OffsetDateTime.ofInstant(endInstant, zone);
+
+            String title = ev.getSummary() != null ? ev.getSummary().getValue() : "Занято";
+
+            return new BusySlotDto(
+                    start.toString(),
+                    end.toString(),
+                    title,
+                    "#ff9f89",      // цвет для занятых слотов
+                    "background"    // display для FullCalendar
+            );
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
+
 
     private OffsetDateTime toOffset(EventDateTime edt) {
         // либо dateTime (точное), либо date (all-day)
@@ -102,19 +121,25 @@ public class AppointmentService {
 
         }
 
-        if (!googleCalendarService.isSlotAvailable(appointment.getStartTime(), appointment.getEndTime())) {
+        if (!СalendarService.isSlotAvailable(appointment.getStartTime(), appointment.getEndTime())) {
             throw new IllegalStateException("This slot is already taken (Google Calendar)");
         }
 
         //что по срокам действия???????
 
-        // Создание события в Google Calendar
-        String eventId = googleCalendarService.createEvent(appointment);
+        // Создание события в яндекс Calendar
+        String eventId = СalendarService.createEvent(appointment);
         appointment.setGoogleEventId(eventId);
         appointment.setStatus(AppointmentStatus.CONFIRMED);
         appointmentRepository.save(appointment);
 
         // Отправка подтверждения клиенту
-        emailService.sendConfirmationNotification(appointment.getClientEmail(), appointment);
+        if (appointment.getClientEmail() != null && !appointment.getClientEmail().isBlank()) {
+            emailService.sendConfirmationNotification(appointment.getClientEmail(), appointment);
+        }
+
+
+//        // Отправка подтверждения клиенту
+//        emailService.sendConfirmationNotification(appointment.getClientEmail(), appointment);
     }
 }

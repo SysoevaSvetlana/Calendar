@@ -5,6 +5,7 @@ import com.example.Calendar.dto.BusySlotDto;
 import com.example.Calendar.model.Appointment;
 import com.example.Calendar.service.AppointmentService;
 import lombok.RequiredArgsConstructor;
+import net.fortuna.ical4j.data.ParserException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,7 +29,7 @@ public class AppointmentController {
 
     @GetMapping("/slots")
         public List<BusySlotDto> slots(@RequestParam OffsetDateTime start,
-                @RequestParam OffsetDateTime end) throws IOException {
+                @RequestParam OffsetDateTime end) throws IOException, ParserException {
 
 
             LocalDateTime from = start.toLocalDateTime();
