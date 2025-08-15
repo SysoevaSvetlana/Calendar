@@ -24,7 +24,7 @@
 - **Spring Security + OAuth2 (Google)**
 - **Spring Data JPA**
 - **JavaMailSender** для отправки email-подтверждений
-- **Google Calendar API** для синхронизации слотов
+- **Google Calendar API/Яндекс календарь** для синхронизации слотов
 
 ### [Frontend](https://github.com/SysoevaSvetlana/videoFront.git):
 - **Vue**
