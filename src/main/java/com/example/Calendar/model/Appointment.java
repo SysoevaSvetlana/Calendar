@@ -33,6 +33,9 @@ public class Appointment {
     @Column(columnDefinition = "TEXT")
     private String description;
 
+    @Column(name = "package_name")
+    private String packageName;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private AppointmentStatus status = AppointmentStatus.PENDING;

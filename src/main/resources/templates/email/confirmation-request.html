@@ -20,13 +20,13 @@
     <p>Календарь получил новую заявку. Проверьте её детали и подтвердите, если время подходит.</p>
 
     <table class="details" border="0" cellspacing="0" cellpadding="0">
-        <tr><td><strong>№ заявки</strong></td><td th:text="${appointment.id}">123</td></tr>
         <tr><td><strong>Имя клиента</strong></td><td th:text="${appointment.clientName}">Иван Иванов</td></tr>
         <tr><td><strong>E-mail</strong></td><td th:text="${appointment.clientEmail}">ivan@example.com</td></tr>
         <tr><td><strong>Дата&nbsp;/ время&nbsp;начала</strong></td>
             <td th:text="${#temporals.format(appointment.startTime,'dd.MM.yyyy HH:mm')}">25.06.2025 10:00</td></tr>
         <tr><td><strong>Дата&nbsp;/ время&nbsp;окончания</strong></td>
             <td th:text="${#temporals.format(appointment.endTime,'dd.MM.yyyy HH:mm')}">25.06.2025 11:00</td></tr>
+        <tr><td><strong>Пакет</strong></td><td th:text="${appointment.packageName ?: 'Не указан'}">Базовый пакет</td></tr>
         <tr><td><strong>Описание</strong></td><td th:text="${appointment.description}">Портретная фотосессия…</td></tr>
     </table>
 

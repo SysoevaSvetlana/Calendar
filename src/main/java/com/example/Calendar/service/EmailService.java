@@ -27,6 +27,8 @@ public class EmailService {
     private final NotificationRepository notificationRepo;
 
     public void sendConfirmationRequest(String ownerEmail, Appointment appointment) {
+        System.out.println("Отправка письма владельцу для appointment с packageName: " + appointment.getPackageName());
+
         String confirmationUrl = "http://localhost:8080/api/appointments/confirm?token=" + appointment.getConfirmationToken();
 
         Context context = new Context();
@@ -39,6 +41,8 @@ public class EmailService {
     }
 
     public void sendConfirmationNotification(String clientEmail, Appointment appointment) {
+        System.out.println("Отправка письма клиенту для appointment с packageName: " + appointment.getPackageName());
+
         Context context = new Context();
         context.setVariable("appointment", appointment);
 

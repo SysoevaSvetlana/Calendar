@@ -94,6 +94,8 @@ public class YandexCalDavService {
         return result;
     }
     public String createEvent(Appointment appointment) throws IOException, ValidationException {
+        System.out.println("Создание события для appointment с packageName: " + appointment.getPackageName());
+
         String calendarUrl = config.getUrl() + config.getCalendarPath();
         if (!calendarUrl.endsWith("/")) {
             calendarUrl += "/";
@@ -109,10 +111,11 @@ public class YandexCalDavService {
         VEvent event = new VEvent(startDate, endDate, "Запись: " + appointment.getClientName());
         event.getProperties().add(new Uid(uid));
         event.getProperties().add(new Description(String.format(
-                "Имя: %s%nEmail: %s%nТелефон: %s%nКомментарий: %s",
+                "Имя: %s%nEmail: %s%nТелефон: %s%nПакет: %s%nКомментарий: %s",
                 appointment.getClientName(),
                 appointment.getClientEmail(),
                 appointment.getClientPhone(),
+                appointment.getPackageName() != null ? appointment.getPackageName() : "Не указан",
                 appointment.getDescription() != null ? appointment.getDescription() : ""
         )));
 

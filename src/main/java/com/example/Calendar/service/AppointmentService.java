@@ -93,6 +93,8 @@ public class AppointmentService {
 
     @Transactional
     public Appointment createAppointment(Appointment appointment, String ownerEmail) {
+        System.out.println("AppointmentService.createAppointment: packageName до сохранения = " + appointment.getPackageName());
+
         // Проверка доступности слота
         if (appointmentRepository.isSlotBooked(appointment.getStartTime(), appointment.getEndTime())) {
             throw new IllegalStateException("This time slot is already booked");
@@ -104,6 +106,7 @@ public class AppointmentService {
         appointment.setStatus(AppointmentStatus.PENDING);
 
         Appointment savedAppointment = appointmentRepository.save(appointment);
+        System.out.println("AppointmentService.createAppointment: packageName после сохранения = " + savedAppointment.getPackageName());
 
         // Отправка уведомления владельцу
         emailService.sendConfirmationRequest(ownerEmail, savedAppointment);
@@ -115,6 +118,8 @@ public class AppointmentService {
     public void confirmAppointment(UUID confirmationToken) throws IOException {
         Appointment appointment = appointmentRepository.findByConfirmationToken(confirmationToken)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid confirmation token"));
+
+        System.out.println("AppointmentService.confirmAppointment: packageName = " + appointment.getPackageName());
 
         if (appointment.getStatus() != AppointmentStatus.PENDING) {
             throw new IllegalStateException("Appointment already processed");
